@@ -16,7 +16,7 @@ def gradient_backprop(x,y,y_hat):
     return np.dot(2*x,y_hat-y).mean()
 
 
-iters = 1000
+iters = 20
 lr = 0.001
 
 for epoch in range(iters):
