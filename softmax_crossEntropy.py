@@ -15,11 +15,12 @@ def categorical_cross_entropy(predicted,ground_truth):
     return l
 
 softmax_outputs = softmax(y_pred)
-print(softmax_outputs)
 print(categorical_cross_entropy(softmax_outputs,y))
 
-predicted_tensor = torch.from_numpy(np.array([0.7,0.2,0.1]))
-ground_truth_tensor = torch.from_numpy(np.array([1,0,0],dtype=np.float32))
+predicted_tensor = torch.from_numpy(y_pred).view(1,3)
+
+ground_truth_tensor = torch.tensor([2])
 torch_softmax = torch.softmax(predicted_tensor,dim=0)
-torch_cross_entropy = torch.binary_cross_entropy_with_logits(torch_softmax,ground_truth_tensor)
-print(torch_cross_entropy)
+torch_cross_entropy = torch.nn.CrossEntropyLoss() #softmax + cross entropy 
+
+print(torch_cross_entropy(predicted_tensor,ground_truth_tensor))
