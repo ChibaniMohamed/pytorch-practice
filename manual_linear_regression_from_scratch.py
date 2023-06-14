@@ -23,7 +23,7 @@ for epoch in range(iters):
     y_predicted = forward(x)
     l = loss(y_predicted,y)
     gradient = gradient_backprop(x,y,y_predicted)
-    w -= lr * gradient
+    w -= lr * gradient                                      
     print(f'epoch {epoch} ---> weights : {w} | loss : {l}')
 
 

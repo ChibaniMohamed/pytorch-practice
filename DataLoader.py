@@ -2,9 +2,13 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 dataset = torchvision.datasets.CIFAR10(root='./data',train=True,transform=torchvision.transforms.ToTensor())
+features,labels = dataset[0]
+print(type(features))
 dataloader = DataLoader(dataset=dataset,batch_size=4,shuffle=True)
 data = iter(dataloader)
 batch_size = 4
@@ -12,6 +16,7 @@ n_iterations = 2
 for epoch in range(1,n_iterations+1):
    for i,(inputs,labels) in enumerate(dataloader):
       for batch_idx in range(1,batch_size+1):
+        
         print(f'epoch {epoch} --> step {batch_idx}/{batch_size}')
       if(i == 1):
             break
