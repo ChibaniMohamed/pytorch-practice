@@ -54,7 +54,6 @@ for epoch in range(epochs):
         
 
     print(f'epoch {epoch} --> loss {l}')
-
 for i in range(50):
     data_,output = next(iter(dataloader_test))
     data = data_.to(device)
