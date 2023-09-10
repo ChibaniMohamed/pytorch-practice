@@ -33,27 +33,27 @@ model = NeuralNet(28*28,10)
 optimizer = SGD(params=model.parameters(),lr=learning_rate)
 loss = nn.CrossEntropyLoss()
 
-for i in range(500):
+for epoch in range(2):
     l = 0
-    for batch in range(batch_size-1):
-        input,label = next(iter(dataloader))
-       
+    for i,(input,label) in  enumerate(dataloader):
         
-        prediction = model.forward(input[batch][0])
-        l = loss(prediction,label[batch])
+        
+        prediction = model.forward(input)
+        l = loss(prediction,label)
         l.backward()
         optimizer.step()
         optimizer.zero_grad()
+        if (i+1) % 100 == 0 :
+            print(f'Epoch [{epoch+1}/2], Step {i+1}/{len(dataloader)}, Loss [{l}]')
         
-    print('epoch ---> ',i+1,' || ','loss ---> ',l)
 
 
 
 
 
 for i in range(epochs):
-    input,label = next(iter(dataloader))
     for batch in range(batch_size):
+        input,label = next(iter(dataloader))
         
         prediction = model.forward(input[batch])
         prediction = prediction.argmax(1)
