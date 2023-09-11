@@ -61,25 +61,15 @@ try :
             if (i+1) % 100 == 0 :
                 print(f'Epoch [{epoch+1}/{epochs}], Step {i+1}/{len(train_dataloader)}, Loss [{l}]')
 except KeyboardInterrupt:
+    print('saving checkpoint ...')
     torch.save({
         'epoch':last_epoch,
         'step':last_step,
         'loss':last_loss,
         'model_state_dict':model.state_dict(),
         'optimizer_state_dict':optimizer.state_dict()
-    },'./model.pt')       
-
-'''
-
-
-
-for i in range(len(test_dataloader)):
-        input,label = next(iter(test_dataloader))
-        input = input.to(device)
-        label = label.to(device)
-        prediction = model.forward(input)
-        prediction = prediction.argmax(1)
-        plt.title(f'truth : {label[0]} | prediction : {prediction[0]}')
-        plt.imshow(input.view(28,28),cmap='gray')
-        plt.show()
-'''
+    },'./model_checkpoint.tar')
+    print('checkpoint saved !')
+    print('saving model ...')  
+    torch.jit.script(model).save('./model.pt')   
+    print('model saved !')  
