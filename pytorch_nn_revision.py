@@ -4,13 +4,20 @@ from torch.utils.data import DataLoader
 import torch.nn as nn
 import matplotlib.pyplot as plt
 from torch.optim import SGD
+import torch
 
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print('device used : ',device)
 batch_size = 4
 learning_rate = 0.01
 epochs = 100
 
-dataset = MNIST(root='./data',train=True,transform=ToTensor())
-dataloader = DataLoader(dataset=dataset,shuffle=True,batch_size=batch_size)
+train_data = MNIST(root='./data',train=True,transform=ToTensor())
+test_data = MNIST(root='./data',train=False,transform=ToTensor())
+
+train_dataloader = DataLoader(dataset=train_data,shuffle=True,batch_size=batch_size)
+test_dataloader = DataLoader(dataset=test_data,shuffle=True)
 
 class NeuralNet(nn.Module):
     def __init__(self,input_size,output_size):
@@ -29,34 +36,50 @@ class NeuralNet(nn.Module):
         activation2 = self.activation2(linear2)
         return self.linear3(activation2)
 
-model = NeuralNet(28*28,10)
+model = NeuralNet(28*28,10).to(device)
 optimizer = SGD(params=model.parameters(),lr=learning_rate)
 loss = nn.CrossEntropyLoss()
 
-for epoch in range(2):
-    l = 0
-    for i,(input,label) in  enumerate(dataloader):
+last_epoch = 0
+last_step = 0
+last_loss = 0
+try : 
+    for epoch in range(epochs):
+        last_epoch = epoch
+        l = 0
         
-        
+        for i,(input,label) in enumerate(train_dataloader):
+            last_step = i
+            input = input.to(device)
+            label = label.to(device)
+            prediction = model.forward(input)
+            l = loss(prediction,label)
+            l.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+            last_loss = l
+            if (i+1) % 100 == 0 :
+                print(f'Epoch [{epoch+1}/{epochs}], Step {i+1}/{len(train_dataloader)}, Loss [{l}]')
+except KeyboardInterrupt:
+    torch.save({
+        'epoch':last_epoch,
+        'step':last_step,
+        'loss':last_loss,
+        'model_state_dict':model.state_dict(),
+        'optimizer_state_dict':optimizer.state_dict()
+    },'./model.pt')       
+
+'''
+
+
+
+for i in range(len(test_dataloader)):
+        input,label = next(iter(test_dataloader))
+        input = input.to(device)
+        label = label.to(device)
         prediction = model.forward(input)
-        l = loss(prediction,label)
-        l.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-        if (i+1) % 100 == 0 :
-            print(f'Epoch [{epoch+1}/2], Step {i+1}/{len(dataloader)}, Loss [{l}]')
-        
-
-
-
-
-
-for i in range(epochs):
-    for batch in range(batch_size):
-        input,label = next(iter(dataloader))
-        
-        prediction = model.forward(input[batch])
         prediction = prediction.argmax(1)
-        plt.title(prediction)
-        plt.imshow(input[batch].view(28,28),cmap='gray')
+        plt.title(f'truth : {label[0]} | prediction : {prediction[0]}')
+        plt.imshow(input.view(28,28),cmap='gray')
         plt.show()
+'''
