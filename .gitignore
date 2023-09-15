@@ -1,4 +1,4 @@
 /data
 /gtsrb_dataset
-*.pt
-*.tar
+.pt
+.tar
