@@ -70,7 +70,7 @@ except KeyboardInterrupt:
 
 
 for i,(input,label) in enumerate(train_loader):
-    print(input[0].shape)
+    
     normalized_input = input[0].permute(1,2,0)
     prediction = model.forward(input.to(device)).argmax(1)[0]
     plt.title(f'predicted :{prediction} | ground truth : {label[0]}')
