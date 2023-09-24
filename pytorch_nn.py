@@ -25,9 +25,6 @@ class LinearReg(nn.Module):
     
 
 
-
-
-
 model = LinearReg(n_features,n_features)
 
 
